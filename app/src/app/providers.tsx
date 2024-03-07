@@ -1,11 +1,10 @@
-"use client";
-
+'use client';
 import { WagmiProvider } from 'wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { wagmiConfig } from '@/lib/wagmiConfig';
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -13,9 +12,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        {mounted && children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{mounted && children}</QueryClientProvider>
     </WagmiProvider>
-  )
+  );
 }

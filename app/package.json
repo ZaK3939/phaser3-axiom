@@ -15,6 +15,7 @@
     "@types/node": "20.6.2",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "phaser": "^3.80.1",
     "autoprefixer": "10.4.15",
     "comlink": "^4.4.1",
     "eslint": "8.49.0",
