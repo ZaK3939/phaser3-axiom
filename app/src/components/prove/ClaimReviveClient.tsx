@@ -72,7 +72,7 @@ export default function ClaimReviveClient({
     // if (!!hasClaimed) {
     //   return "Airdrop already claimed"
     // }
-    return "Claim 100 UT";
+    return "Claim Revive";
   }
 
   const renderClaimProofCostText = () => {

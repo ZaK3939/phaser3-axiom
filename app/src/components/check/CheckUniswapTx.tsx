@@ -11,7 +11,7 @@ export default function CheckUniswapTx() {
   const [recentSwap, setRecentSwap] = useState<any | undefined | null>(undefined);
 
   const { address, isConnected } = useAccount();
-
+  console.log('address', address);
   useEffect(() => {
     const findTx = async () => {
       if (address === undefined || !isConnected) {

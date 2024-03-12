@@ -14,9 +14,11 @@ class PlayScene extends GameScene {
   highScoreText: Phaser.GameObjects.Text;
   scoreText: Phaser.GameObjects.Text;
   gameOverText: Phaser.GameObjects.Image;
+  gameReviveText: Phaser.GameObjects.Image;
   restartText: Phaser.GameObjects.Image;
   reviveText: Phaser.GameObjects.Image;
   gameOverContainer: Phaser.GameObjects.Container;
+  gameOverReviveContainer: Phaser.GameObjects.Container;
 
   score: number = 0;
   scoreInterval: number = 100;
@@ -132,12 +134,18 @@ class PlayScene extends GameScene {
 
   createGameoverContainer() {
     this.gameOverText = this.add.image(0, 0, 'game-over');
-    this.restartText = this.add.image(-40, 80, 'restart').setInteractive();
-    this.reviveText = this.add.image(40, 80, 'revive').setInteractive();
+    this.gameReviveText = this.add.image(0, 0, 'reborn');
+    this.restartText = this.add.image(0, 80, 'restart').setInteractive();
+    this.reviveText = this.add.image(0, 80, 'revive').setInteractive();
 
     this.gameOverContainer = this.add
       .container(this.gameWidth / 2, this.gameHeight / 2 - 50)
-      .add([this.gameOverText, this.restartText, this.reviveText])
+      .add([this.gameOverText, this.restartText])
+      .setAlpha(0);
+
+    this.gameOverReviveContainer = this.add
+      .container(this.gameWidth / 2, this.gameHeight / 2 - 50)
+      .add([this.gameReviveText, this.reviveText])
       .setAlpha(0);
   }
 
@@ -240,6 +248,7 @@ class PlayScene extends GameScene {
 
       this.obstacles.clear(true, true);
       this.gameOverContainer.setAlpha(0);
+      this.gameOverReviveContainer.setAlpha(0);
       this.anims.resumeAll();
 
       this.isGameRunning = true;
@@ -247,26 +256,19 @@ class PlayScene extends GameScene {
   }
 
   handleReviveGameRestart() {
-    this.reviveText.on('pointerdown', () => {
-      this.physics.resume();
-      this.player.setVelocityY(0);
-
-      this.obstacles.clear(true, true);
-      this.gameOverContainer.setAlpha(0);
-      this.anims.resumeAll();
-
-      this.isGameRunning = true;
-    });
     EventBus.on('revive from contract', () => {
-      console.log('revive from contract');
-      this.physics.resume();
-      this.player.setVelocityY(0);
-
-      this.obstacles.clear(true, true);
       this.gameOverContainer.setAlpha(0);
-      this.anims.resumeAll();
+      this.gameOverReviveContainer.setAlpha(1);
+      this.reviveText.on('pointerdown', () => {
+        this.physics.resume();
+        this.player.setVelocityY(0);
 
-      this.isGameRunning = true;
+        this.obstacles.clear(true, true);
+        this.gameOverReviveContainer.setAlpha(0);
+        this.anims.resumeAll();
+
+        this.isGameRunning = true;
+      });
     });
   }
 
