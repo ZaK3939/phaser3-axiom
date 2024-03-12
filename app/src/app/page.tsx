@@ -50,11 +50,6 @@ export default async function Home() {
       <Title>Crypto Run</Title>
       {!gameover ? (
         <div className='text-center'>
-          {/* Players can revive through transactions on{' '}
-          <Link href='https://app.uniswap.org/swap' target='_blank'>
-            Uniswap
-          </Link>{' '}
-          and extend their score by utilizing verification on Axiom, <br /> */}
           Get another life by Swap on Uniswap! <br />
           Aiming "Top High Score" for the prize in the daily competition.
         </div>
