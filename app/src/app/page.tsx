@@ -5,6 +5,8 @@ import CodeBox from '@/components/ui/CodeBox';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { EventBus } from './EventBus';
+import UpdateScoreClient from '@/components/score/UpdateScoreClient';
+import GameScore from '@/lib/abi/GameScore.json';
 
 export default async function Home() {
   let compiledCircuit;
@@ -32,6 +34,17 @@ export default async function Home() {
     setGameOver(true);
   });
 
+  const [createScore, setCreateScore] = useState(0);
+
+  useEffect(() => {
+    setCreateScore(0);
+  }, []);
+
+  EventBus.on('submit score', (data: any) => {
+    console.log(Number(data));
+    setCreateScore(Number(data));
+  });
+
   return (
     <>
       <Title>Crypto Run</Title>
@@ -56,6 +69,7 @@ export default async function Home() {
       )}
 
       {gameover ? <AdvanceStepButton label='Generate Proof for Reborn' href={'/check'} /> : null}
+      {createScore ? <UpdateScoreClient score={createScore} scoreUpdateAbi={GameScore.abi} /> : null}
     </>
   );
 }

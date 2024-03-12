@@ -15,7 +15,6 @@ import { formatEther, formatUnits } from "viem";
 import Link from "next/link";
 import { useAxiomCircuit } from '@axiom-crypto/react';
 import Decimals from "../ui/Decimals";
-import { EventBus } from '@/app/EventBus';
 
 export default function ClaimReviveClient({
   axiomGameDemoAbi,
@@ -30,14 +29,6 @@ export default function ClaimReviveClient({
   // Prepare hook for the sendQuery transaction
   const { data } = useSimulateContract(builtQuery!);
   const { writeContract, isPending, isSuccess, isError } = useWriteContract();
-
-  // Check that the user has not claimed the airdrop yet
-  // const { data: hasClaimed, isPending: hasClaimedLoading } = useReadContract({
-  //   address: Constants.GAME_SCORE as `0x${string}`,
-  //   abi: airdropAbi,
-  //   functionName: 'hasClaimed',
-  //   args: [address ?? ""],
-  // });
 
   useEffect(() => {
     if (isSuccess) {
