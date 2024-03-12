@@ -283,6 +283,7 @@ class PlayScene extends GameScene {
 
       const newHighScore = this.highScoreText.text.substring(this.highScoreText.text.length - 5);
       const newScore = Number(this.scoreText.text) > Number(newHighScore) ? this.scoreText.text : newHighScore;
+
       EventBus.emit('submit score', newScore);
       this.highScoreText.setText('HI ' + newScore);
       this.highScoreText.setAlpha(1);
