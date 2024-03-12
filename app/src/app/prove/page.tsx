@@ -1,9 +1,9 @@
-import BuildQuery from "@/components/prove/BuildQuery";
-import Title from "@/components/ui/Title";
-import AutonomousAirdrop from '@/lib/abi/AutonomousAirdrop.json';
-import jsonInputs from "../../../axiom/data/inputs.json";
-import { Constants } from "@/shared/constants";
-import { UserInput } from "@axiom-crypto/client";
+import BuildQuery from '@/components/prove/BuildQuery';
+import Title from '@/components/ui/Title';
+import AxiomGameDemo from '@/lib/abi/AxiomGameDemo.json';
+import jsonInputs from '../../../axiom/data/inputs.json';
+import { Constants } from '@/shared/constants';
+import { UserInput } from '@axiom-crypto/client';
 
 interface PageProps {
   params: Params;
@@ -27,19 +27,11 @@ export default async function Prove({ searchParams }: PageProps) {
 
   return (
     <>
-      <Title>
-        Prove
-      </Title>
-      <div className="text-center">
-        Please wait while your browser generates a compute proof for the Axiom Query.
-      </div>
-      <div className="flex flex-col gap-2 items-center">
-        <BuildQuery
-          inputs={inputs}
-          callbackAddress={Constants.AUTO_AIRDROP_ADDR}
-          callbackAbi={AutonomousAirdrop.abi}
-        />
+      <Title>Prove</Title>
+      <div className='text-center'>Please wait while your browser generates a compute proof for the Axiom Query.</div>
+      <div className='flex flex-col gap-2 items-center'>
+        <BuildQuery inputs={inputs} callbackAddress={Constants.AXIOM_GAME_DEMO} callbackAbi={AxiomGameDemo.abi} />
       </div>
     </>
-  )
+  );
 }

@@ -15,6 +15,7 @@ class PlayScene extends GameScene {
   scoreText: Phaser.GameObjects.Text;
   gameOverText: Phaser.GameObjects.Image;
   restartText: Phaser.GameObjects.Image;
+  reviveText: Phaser.GameObjects.Image;
   gameOverContainer: Phaser.GameObjects.Container;
 
   score: number = 0;
@@ -43,6 +44,7 @@ class PlayScene extends GameScene {
     this.handleGameStart();
     this.handleObstacleCollisions();
     this.handleGameRestart();
+    this.handleReviveGameRestart();
 
     this.progressSound = this.sound.add('progress', {
       volume: 0.2,
@@ -130,11 +132,12 @@ class PlayScene extends GameScene {
 
   createGameoverContainer() {
     this.gameOverText = this.add.image(0, 0, 'game-over');
-    this.restartText = this.add.image(0, 80, 'restart').setInteractive();
+    this.restartText = this.add.image(-40, 80, 'restart').setInteractive();
+    this.reviveText = this.add.image(40, 80, 'revive').setInteractive();
 
     this.gameOverContainer = this.add
       .container(this.gameWidth / 2, this.gameHeight / 2 - 50)
-      .add([this.gameOverText, this.restartText])
+      .add([this.gameOverText, this.restartText, this.reviveText])
       .setAlpha(0);
   }
 
@@ -227,6 +230,35 @@ class PlayScene extends GameScene {
 
   handleGameRestart() {
     this.restartText.on('pointerdown', () => {
+      this.spawnTime = 0;
+      this.score = 0;
+      this.scoreDeltaTime = 0;
+      this.gameSpeedModifier = 1;
+
+      this.physics.resume();
+      this.player.setVelocityY(0);
+
+      this.obstacles.clear(true, true);
+      this.gameOverContainer.setAlpha(0);
+      this.anims.resumeAll();
+
+      this.isGameRunning = true;
+    });
+  }
+
+  handleReviveGameRestart() {
+    this.reviveText.on('pointerdown', () => {
+      this.physics.resume();
+      this.player.setVelocityY(0);
+
+      this.obstacles.clear(true, true);
+      this.gameOverContainer.setAlpha(0);
+      this.anims.resumeAll();
+
+      this.isGameRunning = true;
+    });
+    EventBus.on('revive from contract', () => {
+      console.log('revive from contract');
       this.physics.resume();
       this.player.setVelocityY(0);
 
@@ -252,11 +284,6 @@ class PlayScene extends GameScene {
 
       this.highScoreText.setText('HI ' + newScore);
       this.highScoreText.setAlpha(1);
-
-      this.spawnTime = 0;
-      this.score = 0;
-      this.scoreDeltaTime = 0;
-      this.gameSpeedModifier = 1;
     });
   }
 }

@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
-
-import { IERC20 } from "@openzeppelin-contracts/token/ERC20/IERC20.sol";
+pragma solidity ^0.8.23;
 import { Ownable } from "@openzeppelin-contracts/access/Ownable.sol";
-
 import { AxiomV2Client } from "@axiom-crypto/v2-periphery/client/AxiomV2Client.sol";
+import { IGameScore } from "./IGameScore.sol";
+import { console2 } from "forge-std/console2.sol";
 
-contract AutonomousAirdrop is AxiomV2Client, Ownable {
-    event ClaimAirdrop(address indexed user, uint256 indexed queryId, uint256 numTokens, bytes32[] axiomResults);
-    event ClaimAirdropError(address indexed user, string error);
+contract AxiomGameDemo is AxiomV2Client, Ownable {
+    event ClaimRevive(address indexed user, uint256 indexed queryId, uint256 numTokens, bytes32[] axiomResults);
+    event ClaimReviveError(address indexed user, string error);
     event AxiomCallbackQuerySchemaUpdated(bytes32 axiomCallbackQuerySchema);
-    event AirdropTokenAddressUpdated(address token);
+    event GameScoreAddressUpdated(address gamescore);
 
     bytes32 public constant SWAP_EVENT_SCHEMA = 0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67;
     address public constant UNIV3_POOL_UNI_WETH0 = 0x224Cc4e5b50036108C1d862442365054600c260C;
@@ -20,9 +19,9 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
     uint64 public callbackSourceChainId;
     bytes32 public axiomCallbackQuerySchema;
     mapping(address => bool) public querySubmitted;
-    mapping(address => bool) public hasClaimed;
+    mapping(address => uint32) public lastTimeSwapped;
 
-    IERC20 public token;
+    IGameScore public gamescore;
 
     constructor(address _axiomV2QueryAddress, uint64 _callbackSourceChainId, bytes32 _axiomCallbackQuerySchema)
         AxiomV2Client(_axiomV2QueryAddress)
@@ -37,9 +36,9 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
         emit AxiomCallbackQuerySchemaUpdated(_axiomCallbackQuerySchema);
     }
 
-    function updateAirdropToken(address _token) public onlyOwner {
-        token = IERC20(_token);
-        emit AirdropTokenAddressUpdated(_token);
+    function updateGameScoreAddress(address _gamescore) public onlyOwner {
+        gamescore = IGameScore(_gamescore);
+        emit GameScoreAddressUpdated(_gamescore);
     }
 
     function _axiomV2Callback(
@@ -50,15 +49,15 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
         bytes32[] calldata axiomResults,
         bytes calldata /* extraData */
     ) internal virtual override {
-        require(!hasClaimed[callerAddr], "Autonomous Airdrop: User has already claimed this airdrop");
 
         // Parse results
         address userEventAddress = address(uint160(uint256(axiomResults[0])));
         uint32 blockNumber = uint32(uint256(axiomResults[1]));
         address uniV3PoolUniWethAddr = address(uint160(uint256(axiomResults[2])));
 
+        console2.log(callerAddr, userEventAddress, blockNumber, uniV3PoolUniWethAddr);
         // Validate the results
-        require(userEventAddress == callerAddr, "Autonomous Airdrop: Invalid user address for event");
+        require(userEventAddress == callerAddr, "Autonomous Airdrop: User address in results does not match caller address");
         require(
             blockNumber >= MIN_BLOCK_NUMBER,
             "Autonomous Airdrop: Block number for transaction receipt must be 4000000 or greater"
@@ -68,13 +67,12 @@ contract AutonomousAirdrop is AxiomV2Client, Ownable {
             uniV3PoolUniWethAddr == UNIV3_POOL_UNI_WETH1,
             "Autonomous Airdrop: Address that emitted `Swap` event is not the UniV3 UNI-WETH pool address"
         );
+        require(blockNumber > lastTimeSwapped[callerAddr], "Autonomous Airdrop: User has already revived using this swapped.");
+        lastTimeSwapped[callerAddr] = blockNumber;
 
         // Transfer tokens to user
-        hasClaimed[callerAddr] = true;
-        uint256 numTokens = 100 * 10 ** 18;
-        token.transfer(callerAddr, numTokens);
-
-        emit ClaimAirdrop(callerAddr, queryId, numTokens, axiomResults);
+        gamescore.changeReviveStatus(callerAddr, true);
+        emit ClaimRevive(callerAddr, queryId, 1, axiomResults);
     }
 
     function _validateAxiomV2Call(

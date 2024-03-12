@@ -15,11 +15,12 @@ import { formatEther, formatUnits } from "viem";
 import Link from "next/link";
 import { useAxiomCircuit } from '@axiom-crypto/react';
 import Decimals from "../ui/Decimals";
+import { EventBus } from '@/app/EventBus';
 
-export default function ClaimAirdropClient({
-  airdropAbi,
+export default function ClaimReviveClient({
+  axiomGameDemoAbi,
 }: {
-  airdropAbi: any[],
+  axiomGameDemoAbi: any[],
 }) {
   const { address } = useAccount();
   const router = useRouter();
@@ -31,12 +32,12 @@ export default function ClaimAirdropClient({
   const { writeContract, isPending, isSuccess, isError } = useWriteContract();
 
   // Check that the user has not claimed the airdrop yet
-  const { data: hasClaimed, isPending: hasClaimedLoading } = useReadContract({
-    address: Constants.AUTO_AIRDROP_ADDR as `0x${string}`,
-    abi: airdropAbi,
-    functionName: 'hasClaimed',
-    args: [address ?? ""],
-  });
+  // const { data: hasClaimed, isPending: hasClaimedLoading } = useReadContract({
+  //   address: Constants.GAME_SCORE as `0x${string}`,
+  //   abi: airdropAbi,
+  //   functionName: 'hasClaimed',
+  //   args: [address ?? ""],
+  // });
 
   useEffect(() => {
     if (isSuccess) {
@@ -46,15 +47,16 @@ export default function ClaimAirdropClient({
     }
   }, [isSuccess, setShowExplorerLink]);
 
-  // Monitor contract for `ClaimAirdrop`
+  // Monitor contract for `ClaimRevive`
   useWatchContractEvent({
-    address: Constants.AUTO_AIRDROP_ADDR as `0x${string}`,
-    abi: airdropAbi,
-    eventName: 'ClaimAirdrop',
+    address: Constants.AXIOM_GAME_DEMO as `0x${string}`,
+    abi: axiomGameDemoAbi,
+    eventName: 'ClaimRevive',
     onLogs(logs: any) {
       let topics = logs[0].topics;
       if (topics[2] && builtQuery?.queryId && BigInt(topics[2]) === BigInt(builtQuery?.queryId)) {
         let txHash = logs[0].transactionHash;
+        
         router.push(`success/?txHash=${txHash}&queryId=${builtQuery?.queryId}`);
       }
     },
@@ -67,9 +69,9 @@ export default function ClaimAirdropClient({
     if (isPending) {
       return "Confrm transaction in wallet...";
     }
-    if (!!hasClaimed) {
-      return "Airdrop already claimed"
-    }
+    // if (!!hasClaimed) {
+    //   return "Airdrop already claimed"
+    // }
     return "Claim 100 UT";
   }
 
@@ -108,7 +110,8 @@ export default function ClaimAirdropClient({
   return (
     <div className="flex flex-col items-center gap-2">
       <Button
-        disabled={!data?.request || isPending || isSuccess || !!hasClaimed}
+        // disabled={!data?.request || isPending || isSuccess || !!hasClaimed}
+        disabled={!data?.request || isPending || isSuccess}
         onClick={() => writeContract(data!.request)}
       >
         {renderButtonText()}

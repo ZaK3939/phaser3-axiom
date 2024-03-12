@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 dependencies:
   '@axiom-crypto/client':
     specifier: 2.0.4
@@ -828,3 +824,7 @@ packages:
       utf-8-validate:
         optional: true
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false

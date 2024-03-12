@@ -1,6 +1,9 @@
+"use client";
+
 import Title from "@/components/ui/Title";
 import { Constants } from "@/shared/constants";
 import Link from "next/link";
+import { EventBus } from '../EventBus';
 
 interface PageProps {
   params: Params;
@@ -18,7 +21,7 @@ interface SearchParams {
 export default async function Success({ searchParams }: PageProps) {
   const txHash = searchParams?.txHash as string ?? "";
   const queryId = searchParams?.queryId as string ?? "";
-
+  EventBus.emit("revive from contract")
   return (
     <>
       <Title>

@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import LoadingAnimation from '../ui/LoadingAnimation';
 import { useAccount } from 'wagmi';
 import { bytes32 } from '@/lib/utils';
-import ClaimAirdropClient from './ClaimAirdropClient';
+import ClaimReviveClient from './ClaimReviveClient';
 
 export default function BuildQuery({
   inputs,
@@ -21,11 +21,7 @@ export default function BuildQuery({
   callbackAbi: any[];
 }) {
   const { build, builtQuery, setParams, areParamsSet } = useAxiomCircuit<typeof jsonInputs>();
-  console.log('inputs', inputs);
-  console.log('callbackAddress', callbackAddress);
-  console.log('callbackAbi', callbackAbi);
-  console.log('callbackExtraData', callbackExtraData);
-  console.log(build);
+
   const { address: refundee } = useAccount();
 
   useEffect(() => {
@@ -56,5 +52,5 @@ export default function BuildQuery({
     );
   }
 
-  return <ClaimAirdropClient airdropAbi={callbackAbi} />;
+  return <ClaimReviveClient axiomGameDemoAbi={callbackAbi} />;
 }

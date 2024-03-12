@@ -28,11 +28,10 @@ export default async function Home() {
     setGameOver(false);
   }, []);
 
-  EventBus.on('gameover', (data) => {
-    console.log('game over');
+  EventBus.on('gameover', (data: any) => {
     setGameOver(true);
-    // Do something with the data
   });
+
   return (
     <>
       <Title>Crypto Resurgence</Title>
