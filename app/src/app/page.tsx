@@ -47,7 +47,6 @@ export default async function Home() {
 
   return (
     <>
-      <Title>Crypto Run</Title>
       {!gameover ? (
         <div className='text-center'>
           Get another life by Swap on Uniswap! <br />

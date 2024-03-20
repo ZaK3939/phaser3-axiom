@@ -12,17 +12,17 @@ export default function Navbar() {
     <div className="flex flex-row justify-between items-center w-full px-8 py-4 border-b-[1px] border-darkgrey shadow-md">
       <Link href="/" className="text-xl text-white font-mono">
         <div >
-          Phaser3 ✖️ Axiom Example
+          Crypto Run
         </div>
       </Link>
       <div className="flex flex-row items-center gap-4 sm:gap-8">
-        <Link href="https://axiom.xyz">
+        <Link className="hover:underline" href="https://axiom.xyz" target="_blank">
           Axiom
         </Link>
-        <Link href="https://docs.axiom.xyz/">
+        <Link className="hover:underline" href="https://docs.axiom.xyz/" target="_blank">
           Docs
         </Link>
-        <Link href="https://github.com/axiom-crypto/autonomous-airdrop-example">
+        <Link className="hover:underline" href="https://github.com/axiom-crypto/autonomous-airdrop-example" target="_blank">
           Github
         </Link>
         <ConnectWallet/>
