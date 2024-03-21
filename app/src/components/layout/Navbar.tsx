@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import ConnectWallet from "../ui/ConnectWallet";
+import { ConnectWallet } from "../ui/ConnectWallet";
 import { useSearchParams } from "next/navigation";
 
 export default function Navbar() {
